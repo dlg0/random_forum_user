@@ -1,0 +1,3 @@
+name = Random Forum User
+description = Gives the option when writing a new forum post to assign a random user.
+core = 7.x
