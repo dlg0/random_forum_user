@@ -1,1 +1,38 @@
 <?php
+
+function random_forum_user_menu() {
+    $items['random_forum_user/test'] = array (
+        'title' => 'Test Page',
+        'description' => 'Test description text',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('random_forum_user_simple_form'),
+        'access callback' => TRUE,
+    );
+    return $items;
+}
+
+function random_forum_user_simple_form($form, &$form_submit) {
+    $form['color'] = array(
+        '#title' => t('Favorite color'),
+        '#type' => 'textfield',
+        '#required' => TRUE,
+        '#description' => t('What is your favorite color?'),
+    );
+    $form['submit'] = array(
+        '#type' => 'submit',
+        '#value' => 'Submit',
+    );
+    return $form;
+}
+
+function random_forum_user_form_node_form_alter(&$form, $form_state) {
+
+    $type = $form['#node']->type;
+
+    if ($type == 'forum') {
+        $form['author']['random_user'] = array(
+            '#type' => 'checkbox',
+            '#title' => t('Generate & use random username'),
+        );
+    }
+}
