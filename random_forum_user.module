@@ -25,14 +25,58 @@ function random_forum_user_simple_form($form, &$form_submit) {
     return $form;
 }
 
-function random_forum_user_form_node_form_alter(&$form, $form_state) {
+function random_forum_user_form_node_form_alter(&$form, &$form_state) {
 
     $type = $form['#node']->type;
 
     if ($type == 'forum') {
-        $form['author']['random_user'] = array(
+
+        $path_to_module = drupal_get_path('module','random_forum_user');
+
+        require($path_to_module.'/phpMudnames/mudnames.php');
+
+        $mudPath = $path_to_module.'/phpMudnames';
+
+        $gname = Mudnames::getInstance($mudPath. '/data/');
+
+        $mudFile = 'female-1';
+        $mudName = $gname->generate_name_from($mudFile);
+
+        $form['author']['use_random_user'] = array(
             '#type' => 'checkbox',
-            '#title' => t('Generate & use random username'),
+            '#title' => t('Use this random username'),
+            '#ajax' => array(
+                'callback' => 'random_forum_user_add_and_update_user',
+                'wrapper' => 'edit-name-dlg',
+            ),
         );
+
+        $form['author']['current_random_user'] = array(
+            '#type' => 'textfield',
+            '#title' => t('Random User Name'),
+            '#default_value' => t($mudName),
+        );
+
+        $form['author']['name']['#prefix'] = '<div id="edit-name-dlg">';
+        $form['author']['name']['#suffix'] = '</div>';
+
+        if ($form['author']['use_random_user']['value'] == 1) {
+            $form['author']['name'] = $form['author']['current_random_user'];
+        }
+
     }
+
+}
+
+function random_forum_user_add_and_update_user($form, $form_state) {
+
+    //$random_name =
+
+//    $edit = array(
+//        'name' => '',
+//        'pass' => user_password(),
+//        //'mail' =>
+//    );
+
+    return $form['author']['name'];
 }
