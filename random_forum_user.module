@@ -51,6 +51,11 @@ function random_forum_user_form_node_form_alter(&$form, &$form_state) {
             ),
         );
 
+        $form['author']['note_to_change_name_first'] = array(
+            '#markup' => t('IF YOU EDIT THE RANDOM, NAME DO IT
+            <span style="text-decoration: underline"><b>BEFORE</b></span> CLICKING THIS'),
+        );
+
         $form['author']['current_random_user'] = array(
             '#type' => 'textfield',
             '#title' => t('Random User Name'),
@@ -60,23 +65,36 @@ function random_forum_user_form_node_form_alter(&$form, &$form_state) {
         $form['author']['name']['#prefix'] = '<div id="edit-name-dlg">';
         $form['author']['name']['#suffix'] = '</div>';
 
-        if ($form['author']['use_random_user']['value'] == 1) {
-            $form['author']['name'] = $form['author']['current_random_user'];
+        $useRandomUserName = !empty($form_state['values']['use_random_user']) ?
+            $form_state['values']['use_random_user'] : 0 ;
+
+        if ($useRandomUserName == 1) {
+            $form['author']['name']['#value'] = $form_state['values']['current_random_user'];
+
+            $random_name = $form_state['values']['current_random_user'];
+
+            $edit = array(
+                'name' => $random_name,
+                'pass' => 'blah',//user_password(),
+                'mail' => $random_name . '@localhost',
+                'status' => 1,
+//                'language' => 'en',
+//                'roles' => array(2 => 'authenticated_user'),
+            );
+
+            user_save(NULL,$edit);
         }
 
+        if ($useRandomUserName == 0) {
+            $form['author']['name']['#value'] = $form['author']['name']['#default_value'];
+        }
     }
 
 }
 
-function random_forum_user_add_and_update_user($form, $form_state) {
+function random_forum_user_add_and_update_user($form, &$form_state) {
 
-    //$random_name =
 
-//    $edit = array(
-//        'name' => '',
-//        'pass' => user_password(),
-//        //'mail' =>
-//    );
 
     return $form['author']['name'];
 }
